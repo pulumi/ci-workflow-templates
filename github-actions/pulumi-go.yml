@@ -1,4 +1,4 @@
-name: Preview or update Pulumi app {{ pulumiStackName }}
+name: Preview or update Pulumi app {{ data.pulumiStackName }}
 on:
   push:
     branches:
@@ -13,7 +13,7 @@ env:
   # then add them here like so:
   # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  PULUMI_STACK_NAME: {{ pulumiStackName }}
+  PULUMI_STACK_NAME: {{ data.pulumiStackName }}
 
 jobs:
   buildSite:
