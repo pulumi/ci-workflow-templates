@@ -1,4 +1,4 @@
-name: Build and deploy
+name: Automated workflow for Pulumi
 on:
   push:
     branches:
