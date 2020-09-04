@@ -6,6 +6,11 @@ on:
   pull_request:
     branches:
       - master
+
+env:
+  PULUMI_STACK_NAME: {{ pulumiStackName }}
+  {{ cloudProviderSecrets }}
+
 jobs:
   buildSite:
     env:
@@ -36,14 +41,15 @@ jobs:
         uses: pulumi/action-install-pulumi-cli@releases/v1
 
       - name: PR previews
-        run: pulumi preview
+        run: pulumi preview -s $PULUMI_STACK_NAME
         if: ${{ github.event_name == 'pull_request' }}
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          {{ cloudProviderSecrets }}
 
       - name: Apply infrastructure update
-        run: pulumi update --yes
+        run: pulumi update --yes -s $PULUMI_STACK_NAME
         if: ${{ github.event_name == 'push' }}
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-
+          {{ cloudProviderSecrets }}
