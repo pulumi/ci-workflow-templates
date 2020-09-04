@@ -8,8 +8,12 @@ on:
       - master
 
 env:
+  # IMPORTANT! Add the secrets that you added to this repository.
+  # For example, if you added `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to this repository's secrets,
+  # then add them here like so:
+  # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   PULUMI_STACK_NAME: {{ pulumiStackName }}
-  {{ cloudProviderSecrets }}
 
 jobs:
   buildSite:
@@ -45,11 +49,9 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-          {{ cloudProviderSecrets }}
 
       - name: Apply infrastructure update
         run: pulumi update --yes -s $PULUMI_STACK_NAME
         if: ${{ github.event_name == 'push' }}
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-          {{ cloudProviderSecrets }}
