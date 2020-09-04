@@ -7,10 +7,16 @@ on:
     branches:
       - master
 
+# These are the environment variables that jobs in the workflow have access to.
+# By defining them here, all jobs/steps will have access to these variables.
 env:
+  # IMPORTANT! You must map the env vars for your cloud provider here even though you add them as secrets
+  # to this repository.
+  # For example, if you are using AWS, then you should add the following:
+  # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
   PULUMI_STACK_NAME: {{ .PulumiStackName }}
-  {{ .EnvironmentInfo }}
 
 jobs:
   buildSite:
