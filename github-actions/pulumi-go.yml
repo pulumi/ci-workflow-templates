@@ -1,4 +1,4 @@
-name: Automated workflow for Pulumi
+name: Preview or update Pulumi app {{ pulumiStackName }}
 on:
   push:
     branches:
