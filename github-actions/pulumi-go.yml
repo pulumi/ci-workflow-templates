@@ -19,6 +19,7 @@ env:
   # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
   PULUMI_STACK_NAME: {{ .PulumiStackName }}
+  PULUMI_WORKING_DIRECTORY: {{ .WorkingDirectory }}
 
 jobs:
   buildSite:
@@ -50,9 +51,9 @@ jobs:
         uses: pulumi/action-install-pulumi-cli@releases/v1
 
       - name: PR previews
-        run: pulumi preview -s $PULUMI_STACK_NAME
+        run: pulumi preview -s $PULUMI_STACK_NAME --cwd $PULUMI_WORKING_DIRECTORY
         if: ${{ github.event_name == 'pull_request' }}
 
       - name: Apply infrastructure update
-        run: pulumi update --yes -s $PULUMI_STACK_NAME
+        run: pulumi update --yes -s $PULUMI_STACK_NAME --cwd $PULUMI_WORKING_DIRECTORY
         if: ${{ github.event_name == 'push' }}
