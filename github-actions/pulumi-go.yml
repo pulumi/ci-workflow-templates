@@ -14,6 +14,7 @@ on:
 env:
   # IMPORTANT! You must map the env vars for your cloud provider here even though you add them as secrets
   # to this repository.
+  # See the setup page for cloud providers here: https://www.pulumi.com/docs/intro/cloud-providers/.
   # For example, if you are using AWS, then you should add the following:
   # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
