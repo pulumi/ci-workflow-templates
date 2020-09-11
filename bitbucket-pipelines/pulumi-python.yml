@@ -1,14 +1,19 @@
 image: pulumi/pulumi-python:latest
 
-variables:
-  PULUMI_STACK_NAME: {{ .PulumiStackName }}
-  PULUMI_WORKING_DIRECTORY: {{ .WorkingDirectory }}
+definitions:
+  steps:
+    - step:
+        name: Set vars
+        script:
+          - &vars export PULUMI_STACK_NAME={{ .PulumiStackName }} && \
+                  export PULUMI_WORKING_DIRECTORY={{ .WorkingDirectory }}
 
 pipelines:
   pull-requests:
     - step:
         name: Preview update to infrastructure
         script:
+          - *vars
           - pulumi preview --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
   
   branches:
@@ -19,4 +24,5 @@ pipelines:
           # the deployment environment at any given time.
           deployment: {{ .PulumiStackName }}
           script:
+            - *vars
             - pulumi up --yes --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
