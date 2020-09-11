@@ -1,0 +1,36 @@
+image: pulumi/pulumi-nodejs:latest
+
+stages:
+    - pulumi
+
+variables:
+  PULUMI_STACK_NAME: {{ .PulumiStackName }}
+  PULUMI_WORKING_DIRECTORY: {{ .WorkingDirectory }}
+
+before_script:
+  # Restore dependencies using yarn.
+  # If using npm, then replace the following line with `npm ci`.
+  - yarn install
+
+  # Having problems with environment variables?
+  # Uncomment the following job to see all env vars
+  # exported in your GitLab Runner.
+  # environment:
+  #   stage: pulumi
+  #   script:
+  #     - export
+  
+  preview:
+    stage: pulumi
+    script:
+      - pulumi preview --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
+    only:
+      - merge_requests
+  
+  update:
+    stage: pulumi
+    script:
+      - pulumi up --yes --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
+    only:
+      refs:
+        - master

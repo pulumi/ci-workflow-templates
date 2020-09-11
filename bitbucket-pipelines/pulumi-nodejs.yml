@@ -1,0 +1,22 @@
+image: pulumi/pulumi-nodejs:latest
+
+variables:
+  PULUMI_STACK_NAME: {{ .PulumiStackName }}
+  PULUMI_WORKING_DIRECTORY: {{ .WorkingDirectory }}
+
+pipelines:
+  pull-requests:
+    - step:
+        name: Preview update to infrastructure
+        script:
+          - pulumi preview --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
+  
+  branches:
+    master:
+      - step:
+          name: Update infrastructure
+          # Using the deployment keyword will ensure that only one pipeline is executing for
+          # the deployment environment at any given time.
+          deployment: {{ .PulumiStackName }}
+          script:
+            - pulumi up --yes --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
