@@ -3,12 +3,18 @@ trigger:
   branches:
     include:
     - master
+  paths:
+    include:
+    - {{ .PathFilter }}
 
 pr:
   branches:
     include:
     # Run PR builds that target master.
     - master
+  paths:
+    include:
+    - {{ .PathFilter }}
 
 pool:
   vmImage: 'ubuntu-latest'

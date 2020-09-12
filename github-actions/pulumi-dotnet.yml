@@ -3,11 +3,13 @@ on:
   push:
     branches:
       - master
-    {{ .PathFilter }}
+    paths:
+      - {{ .PathFilter }}
   pull_request:
     branches:
       - master
-    {{ .PathFilter }}
+    paths:
+      - {{ .PathFilter }}
 
 # These are the environment variables that jobs in the workflow have access to.
 # By defining them here, all jobs/steps will have access to these variables.
