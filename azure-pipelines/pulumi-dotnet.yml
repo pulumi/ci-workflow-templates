@@ -1,0 +1,53 @@
+trigger:
+    batch: true
+    branches:
+      include:
+      - master
+  
+pr:
+  branches:
+    include:
+    # Run PR builds that target master.
+    - master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  pulumiStackName: {{ .PulumiStackName }}
+  pulumiWorkingDirectory: {{ .WorkingDirectory }}
+
+jobs:
+- job: infrastructure
+  steps:
+  - task: NuGetToolInstaller@1
+
+  - task: VSBuild@1
+    inputs:
+      solution: '$(solution)'
+      msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+      msbuildArchitecture: 'x64'
+
+  - task: Pulumi@1
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+    inputs:
+      # To use an Azure Service Connection, un-comment the following line.
+      # azureSubscription: ''
+      command: 'preview'
+      stack: '$(pulumiStackName)'
+      args: '--cwd $(pulumiWorkingDirectory)'
+  
+  - task: Pulumi@1
+    condition: or(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.Reason'], 'BatchedCI'))
+    inputs:
+      # To use an Azure Service Connection, un-comment the following line.
+      # azureSubscription: ''
+      command: 'up'
+      stack: '$(pulumiStackName)'
+      args: '--yes --cwd $(pulumiWorkingDirectory)'
+  
