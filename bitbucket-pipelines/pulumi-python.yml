@@ -1,6 +1,8 @@
 image: pulumi/pulumi-python:latest
 
 definitions:
+  caches:
+    venv: {{ .WorkingDirectory }}/venv
   steps:
     - step:
         name: Set vars
@@ -9,9 +11,33 @@ definitions:
                   export PULUMI_WORKING_DIRECTORY={{ .WorkingDirectory }}
 
 pipelines:
+  default:
+    - step:
+        name: Restore Python dependencies
+        caches:
+          - pip
+          - venv
+        script:
+          - *vars
+          - |
+            pushd ${PULUMI_WORKING_DIRECTORY}
+            # Check if should use venv
+            PULUMI_VENV=$(cat Pulumi.yaml | grep "virtualenv:" | cut -d':' -f2)
+            if [ -z ${PULUMI_VENV} ]; then
+                pip3 install -r requirements.txt
+            else
+                python3 -m venv ${PULUMI_VENV}
+                ${PULUMI_VENV}/bin/python -m pip install --upgrade pip setuptools wheel
+                ${PULUMI_VENV}/bin/python -m pip install -r requirements.txt
+            fi
+            popd
+
   pull-requests:
     - step:
         name: Preview update to infrastructure
+        caches:
+          - pip
+          - venv
         script:
           - *vars
           - pulumi preview --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
@@ -20,6 +46,9 @@ pipelines:
     master:
       - step:
           name: Update infrastructure
+          caches:
+            - pip
+            - venv
           # Using the deployment keyword will ensure that only one pipeline is executing for
           # the deployment environment at any given time.
           deployment: {{ .PulumiStackName }}

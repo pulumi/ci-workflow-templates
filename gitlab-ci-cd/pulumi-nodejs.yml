@@ -11,10 +11,11 @@ only:
   changes:
     - {{ .PathFilter }}
   
-before_script:
-  # Restore dependencies using yarn.
-  # If using npm, then replace the following line with `npm ci`.
-  - yarn install
+default:
+  before_script:
+    # Restore dependencies using yarn.
+    # If using npm, then replace the following line with `npm ci`.
+    - yarn install --cwd ${PULUMI_WORKING_DIRECTORY}
 
   # Having problems with environment variables?
   # Uncomment the following job to see all env vars

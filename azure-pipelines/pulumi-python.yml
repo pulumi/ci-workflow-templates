@@ -32,6 +32,19 @@ jobs:
       addToPath: true
       architecture: 'x64'
 
+  - script: |
+      # Check if should use venv
+      PULUMI_VENV=$(cat Pulumi.yaml | grep "virtualenv:" | cut -d':' -f2)
+      if [ -z ${PULUMI_VENV} ]; then
+          pip3 install -r requirements.txt
+      else
+          python3 -m venv ${PULUMI_VENV}
+          ${PULUMI_VENV}/bin/python -m pip install --upgrade pip setuptools wheel
+          ${PULUMI_VENV}/bin/python -m pip install -r requirements.txt
+      fi
+    displayName: Restore Python dependencies
+    workingDirectory: $(pulumiWorkingDirectory)
+
   - task: Pulumi@1
     condition: eq(variables['Build.Reason'], 'PullRequest')
     inputs:

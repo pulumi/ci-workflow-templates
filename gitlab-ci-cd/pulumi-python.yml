@@ -11,6 +11,21 @@ only:
   changes:
     - {{ .PathFilter }}
 
+default:
+  before_script:
+    - |
+      pushd ${PULUMI_WORKING_DIRECTORY}
+      # Check if should use venv
+      PULUMI_VENV=$(cat Pulumi.yaml | grep "virtualenv:" | cut -d':' -f2)
+      if [ -z ${PULUMI_VENV} ]; then
+          pip3 install -r requirements.txt
+      else
+          python3 -m venv ${PULUMI_VENV}
+          ${PULUMI_VENV}/bin/python -m pip install --upgrade pip setuptools wheel
+          ${PULUMI_VENV}/bin/python -m pip install -r requirements.txt
+      fi
+      popd
+
 # Having problems with environment variables?
 # Uncomment the following job to see all env vars
 # exported in your GitLab Runner.
