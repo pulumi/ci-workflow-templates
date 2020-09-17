@@ -1,43 +1,29 @@
 image: pulumi/pulumi-nodejs:latest
 
 definitions:
-  caches:
-    node-custom: {{ .WorkingDirectory }}/node_modules
   steps:
     - step:
-        name: Set vars
-        script:
-          - &vars export PULUMI_STACK_NAME={{ .PulumiStackName }} && \
-                  export PULUMI_WORKING_DIRECTORY={{ .WorkingDirectory }}
-
-pipelines:
-  default:
-    - step:
         name: Restore npm dependencies
-        caches:
-          - node-custom
         script:
-          - *vars
-          - yarn install --cwd ${PULUMI_WORKING_DIRECTORY}
-
+          - &deps |
+            export PULUMI_STACK_NAME={{ .PulumiStackName }}
+            export PULUMI_WORKING_DIRECTORY={{ .WorkingDirectory }}
+            yarn install --cwd ${PULUMI_WORKING_DIRECTORY}
+pipelines:
   pull-requests:
     - step:
         name: Preview update to infrastructure
-        caches:
-          - node-custom
         script:
-          - *vars
+          - *deps
           - pulumi preview --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
   
   branches:
     master:
       - step:
           name: Update infrastructure
-          caches:
-            - node-custom
           # Using the deployment keyword will ensure that only one pipeline is executing for
           # the deployment environment at any given time.
           deployment: {{ .PulumiStackName }}
           script:
-            - *vars
+            - *deps
             - pulumi up --yes --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}

@@ -1,25 +1,14 @@
 image: pulumi/pulumi-python:latest
 
 definitions:
-  caches:
-    venv: {{ .WorkingDirectory }}/venv
   steps:
     - step:
-        name: Set vars
-        script:
-          - &vars export PULUMI_STACK_NAME={{ .PulumiStackName }} && \
-                  export PULUMI_WORKING_DIRECTORY={{ .WorkingDirectory }}
-
-pipelines:
-  default:
-    - step:
         name: Restore Python dependencies
-        caches:
-          - pip
-          - venv
         script:
-          - *vars
-          - |
+          - &deps |
+            export PULUMI_STACK_NAME={{ .PulumiStackName }}
+            export PULUMI_WORKING_DIRECTORY={{ .WorkingDirectory }}
+            # Change to the working directory for the Pulumi app and restore dependencies.
             pushd ${PULUMI_WORKING_DIRECTORY}
             # Check if should use venv
             PULUMI_VENV=$(cat Pulumi.yaml | grep "virtualenv:" | cut -d':' -f2)
@@ -32,26 +21,25 @@ pipelines:
             fi
             popd
 
+pipelines:
   pull-requests:
     - step:
         name: Preview update to infrastructure
-        caches:
-          - pip
-          - venv
         script:
-          - *vars
+          - *deps
           - pulumi preview --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
   
   branches:
     master:
       - step:
           name: Update infrastructure
-          caches:
-            - pip
-            - venv
           # Using the deployment keyword will ensure that only one pipeline is executing for
           # the deployment environment at any given time.
-          deployment: {{ .PulumiStackName }}
+          #
+          # Valid values are: test, staging, or production.
+          # Add new environments in your repository's Deployment Settings page.
+          # Learn more: https://support.atlassian.com/bitbucket-cloud/docs/set-up-and-monitor-bitbucket-deployments/
+          deployment: test
           script:
-            - *vars
+            - *deps
             - pulumi up --yes --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}

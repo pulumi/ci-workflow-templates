@@ -5,8 +5,9 @@ definitions:
     - step:
         name: Set vars
         script:
-          - &vars export PULUMI_STACK_NAME={{ .PulumiStackName }} && \
-                  export PULUMI_WORKING_DIRECTORY={{ .WorkingDirectory }}
+          - &vars |
+            export PULUMI_STACK_NAME={{ .PulumiStackName }}
+            export PULUMI_WORKING_DIRECTORY={{ .WorkingDirectory }}
 
 pipelines:
   pull-requests:
