@@ -23,7 +23,11 @@ pipelines:
           name: Update infrastructure
           # Using the deployment keyword will ensure that only one pipeline is executing for
           # the deployment environment at any given time.
-          deployment: {{ .PulumiStackName }}
+          #
+          # Valid values are: test, staging, or production.
+          # Add new environments in your repository's Deployment Settings page.
+          # Learn more: https://support.atlassian.com/bitbucket-cloud/docs/set-up-and-monitor-bitbucket-deployments/
+          deployment: test
           script:
             - *deps
             - pulumi up --yes --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
