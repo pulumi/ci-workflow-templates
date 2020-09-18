@@ -5,7 +5,7 @@ trigger:
       - master
     paths:
       include:
-      - {{ .PathFilter }}
+      - [[ .PathFilter ]]
   
 pr:
   branches:
@@ -14,7 +14,7 @@ pr:
     - master
   paths:
     include:
-    - {{ .PathFilter }}
+    - [[ .PathFilter ]]
 
 
 pool:
@@ -24,8 +24,8 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  pulumiStackName: {{ .PulumiStackName }}
-  pulumiWorkingDirectory: {{ .WorkingDirectory }}
+  pulumiStackName: [[ .PulumiStackName ]]
+  pulumiWorkingDirectory: [[ .WorkingDirectory ]]
 
 jobs:
 - job: infrastructure

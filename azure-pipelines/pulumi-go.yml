@@ -5,7 +5,7 @@ trigger:
     - master
   paths:
     include:
-    - {{ .PathFilter }}
+    - [[ .PathFilter ]]
 
 pr:
   branches:
@@ -14,14 +14,14 @@ pr:
     - master
   paths:
     include:
-    - {{ .PathFilter }}
+    - [[ .PathFilter ]]
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  pulumiStackName: {{ .PulumiStackName }}
-  pulumiWorkingDirectory: {{ .WorkingDirectory }}
+  pulumiStackName: [[ .PulumiStackName ]]
+  pulumiWorkingDirectory: [[ .WorkingDirectory ]]
 
 jobs:
 - job: infrastructure
