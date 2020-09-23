@@ -1,15 +1,15 @@
-name: Preview or update Pulumi app {{ .PulumiStackName }}
+name: Preview or update Pulumi app [[ .PulumiStackName ]]
 on:
   push:
     branches:
       - master
     paths:
-      - {{ .PathFilter }}
+      - [[ .PathFilter ]]
   pull_request:
     branches:
       - master
     paths:
-      - {{ .PathFilter }}
+      - [[ .PathFilter ]]
 
 # These are the environment variables that jobs in the workflow have access to.
 # By defining them here, all jobs/steps will have access to these variables.
@@ -21,8 +21,8 @@ env:
   # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-  PULUMI_STACK_NAME: {{ .PulumiStackName }}
-  PULUMI_WORKING_DIRECTORY: {{ .WorkingDirectory }}
+  PULUMI_STACK_NAME: [[ .PulumiStackName ]]
+  PULUMI_WORKING_DIRECTORY: [[ .WorkingDirectory ]]
 
 jobs:
   pulumi:

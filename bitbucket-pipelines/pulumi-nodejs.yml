@@ -6,8 +6,8 @@ definitions:
         name: Restore npm dependencies
         script:
           - &deps |
-            export PULUMI_STACK_NAME={{ .PulumiStackName }}
-            export PULUMI_WORKING_DIRECTORY={{ .WorkingDirectory }}
+            export PULUMI_STACK_NAME=[[ .PulumiStackName ]]
+            export PULUMI_WORKING_DIRECTORY=[[ .WorkingDirectory ]]
             yarn install --cwd ${PULUMI_WORKING_DIRECTORY}
 pipelines:
   pull-requests:

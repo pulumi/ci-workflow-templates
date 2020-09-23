@@ -6,8 +6,8 @@ definitions:
         name: Restore Python dependencies
         script:
           - &deps |
-            export PULUMI_STACK_NAME={{ .PulumiStackName }}
-            export PULUMI_WORKING_DIRECTORY={{ .WorkingDirectory }}
+            export PULUMI_STACK_NAME=[[ .PulumiStackName ]]
+            export PULUMI_WORKING_DIRECTORY=[[ .WorkingDirectory ]]
             # Change to the working directory for the Pulumi app and restore dependencies.
             pushd ${PULUMI_WORKING_DIRECTORY}
             # Check if should use venv

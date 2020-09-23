@@ -4,12 +4,12 @@ stages:
     - pulumi
 
 variables:
-  PULUMI_STACK_NAME: {{ .PulumiStackName }}
-  PULUMI_WORKING_DIRECTORY: {{ .WorkingDirectory }}
+  PULUMI_STACK_NAME: [[ .PulumiStackName ]]
+  PULUMI_WORKING_DIRECTORY: [[ .WorkingDirectory ]]
 
 only:
   changes:
-    - {{ .PathFilter }}
+    - [[ .PathFilter ]]
   
 default:
   before_script:
