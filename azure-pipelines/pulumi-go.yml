@@ -28,7 +28,7 @@ jobs:
   steps:
   - task: GoTool@0
     inputs:
-      version: '1.13'
+      version: '1.14'
 
   - task: Pulumi@1
     condition: eq(variables['Build.Reason'], 'PullRequest')
