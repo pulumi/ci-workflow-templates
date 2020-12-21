@@ -59,7 +59,7 @@ jobs:
         working-directory: ${{ env.PULUMI_WORKING_DIRECTORY }}
 
       - name: Install Pulumi CLI
-        uses: pulumi/action-install-pulumi-cli@releases/v1
+        uses: pulumi/action-install-pulumi-cli@v1.0.1
 
       - name: PR previews
         run: pulumi preview -s $PULUMI_STACK_NAME --cwd ${PULUMI_WORKING_DIRECTORY}
