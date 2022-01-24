@@ -44,13 +44,32 @@ jobs:
         with:
           dotnet-version: 3.1.x
 
-      - name: Install Pulumi CLI
-        uses: pulumi/action-install-pulumi-cli@v1.0.1
-
       - name: PR previews
-        run: pulumi preview -s $PULUMI_STACK_NAME --cwd $PULUMI_WORKING_DIRECTORY
         if: ${{ github.event_name == 'pull_request' }}
+        uses: pulumi/actions@v3
+        with:
+          command: preview
+          stack-name: ${{ env.PULUMI_STACK_NAME }}
+          work-dir: ${{ env.PULUMI_WORKING_DIRECTORY }}
 
       - name: Apply infrastructure update
-        run: pulumi update --yes -s $PULUMI_STACK_NAME --cwd $PULUMI_WORKING_DIRECTORY
         if: ${{ github.event_name == 'push' }}
+        uses: pulumi/actions@v3
+        with:
+          command: up
+          stack-name: ${{ env.PULUMI_STACK_NAME }}
+          work-dir: ${{ env.PULUMI_WORKING_DIRECTORY }}
+
+
+      # If you'd like to run your Pulumi application outside of the official GitHub Action
+
+      #- name: Install Pulumi CLI
+      #  uses: pulumi/setup-pulumi@v2
+
+      #- name: PR previews
+      #  run: pulumi preview -s $PULUMI_STACK_NAME --cwd $PULUMI_WORKING_DIRECTORY
+      #  if: ${{ github.event_name == 'pull_request' }}
+
+      #- name: Apply infrastructure update
+      #  run: pulumi update --yes -s $PULUMI_STACK_NAME --cwd $PULUMI_WORKING_DIRECTORY
+      #  if: ${{ github.event_name == 'push' }}

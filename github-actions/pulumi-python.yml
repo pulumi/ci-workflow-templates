@@ -41,30 +41,39 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: 3.6.x
-    
-      - run: |
-          # Check if should use venv
-          PULUMI_VENV=$(cat Pulumi.yaml | grep "virtualenv:" | cut -d':' -f2)
-          if [ -z ${PULUMI_VENV} ]; then
-              pip3 install -r requirements.txt
-          else
-              python3 -m venv ${PULUMI_VENV}
-              ${PULUMI_VENV}/bin/python -m pip install --upgrade pip setuptools wheel
-              ${PULUMI_VENV}/bin/python -m pip install -r requirements.txt
-          fi
-        name: Restore Python dependencies
+
+      - run: pip install -r requirements.txt
         working-directory: ${{ env.PULUMI_WORKING_DIRECTORY }}
 
-      - name: Install Pulumi CLI
-        uses: pulumi/action-install-pulumi-cli@v1.0.1
-
       - name: PR previews
-        run: pulumi preview -s $PULUMI_STACK_NAME --cwd ${PULUMI_WORKING_DIRECTORY}
         if: ${{ github.event_name == 'pull_request' }}
+        uses: pulumi/actions@v3
+        with:
+          command: preview
+          stack-name: ${{ env.PULUMI_STACK_NAME }}
+          work-dir: ${{ env.PULUMI_WORKING_DIRECTORY }}
 
       - name: Apply infrastructure update
-        run: pulumi update --yes -s $PULUMI_STACK_NAME --cwd ${PULUMI_WORKING_DIRECTORY}
         if: ${{ github.event_name == 'push' }}
+        uses: pulumi/actions@v3
+        with:
+          command: up
+          stack-name: ${{ env.PULUMI_STACK_NAME }}
+          work-dir: ${{ env.PULUMI_WORKING_DIRECTORY }}
+
+
+      # If you'd like to run your Pulumi application outside of the official GitHub Action
+
+      #- name: Install Pulumi CLI
+      #  uses: pulumi/setup-pulumi@v2
+
+      #- name: PR previews
+      #  run: pulumi preview -s $PULUMI_STACK_NAME --cwd $PULUMI_WORKING_DIRECTORY
+      #  if: ${{ github.event_name == 'pull_request' }}
+
+      #- name: Apply infrastructure update
+      #  run: pulumi update --yes -s $PULUMI_STACK_NAME --cwd $PULUMI_WORKING_DIRECTORY
+      #  if: ${{ github.event_name == 'push' }}
