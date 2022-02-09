@@ -11,11 +11,12 @@ definitions:
 
 pipelines:
   pull-requests:
-    - step:
-        name: Preview update to infrastructure
-        script:
-          - *vars
-          - pulumi preview --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
+    '**':
+      - step:
+          name: Preview update to infrastructure
+          script:
+            - *deps
+            - pulumi preview --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
   
   branches:
     master:
