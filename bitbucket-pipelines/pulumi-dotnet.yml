@@ -15,7 +15,7 @@ pipelines:
       - step:
           name: Preview update to infrastructure
           script:
-            - *deps
+            - *vars
             - pulumi preview --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
   
   branches:
