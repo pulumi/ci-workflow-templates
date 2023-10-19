@@ -1,0 +1,34 @@
+image: pulumi/pulumi-base:latest
+
+definitions:
+  steps:
+    - step:
+        name: Set vars
+        script:
+          - &vars |
+            export PULUMI_STACK_NAME=[[ .PulumiStackName ]]
+            export PULUMI_WORKING_DIRECTORY=[[ .WorkingDirectory ]]
+
+pipelines:
+  pull-requests:
+    '**':
+      - step:
+          name: Preview update to infrastructure
+          script:
+            - *deps
+            - pulumi preview --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
+
+  branches:
+    master:
+      - step:
+          name: Update infrastructure
+          # Using the deployment keyword will ensure that only one pipeline is executing for
+          # the deployment environment at any given time.
+          #
+          # Valid values are: test, staging, or production.
+          # Add new environments in your repository's Deployment Settings page.
+          # Learn more: https://support.atlassian.com/bitbucket-cloud/docs/set-up-and-monitor-bitbucket-deployments/
+          deployment: test
+          script:
+            - *vars
+            - pulumi up --yes --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
