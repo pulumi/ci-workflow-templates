@@ -1,0 +1,45 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - [[ .PathFilter ]]
+
+pr:
+  branches:
+    include:
+    # Run PR builds that target master.
+    - master
+  paths:
+    include:
+    - [[ .PathFilter ]]
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  pulumiStackName: [[ .PulumiStackName ]]
+  pulumiWorkingDirectory: [[ .WorkingDirectory ]]
+
+jobs:
+- job: infrastructure
+  steps:
+  - task: Pulumi@1
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+    inputs:
+      # To use an Azure Service Connection, un-comment the following line.
+      # azureSubscription: ''
+      command: 'preview'
+      stack: '$(pulumiStackName)'
+      args: '--cwd $(pulumiWorkingDirectory)'
+  
+  - task: Pulumi@1
+    condition: or(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.Reason'], 'BatchedCI'))
+    inputs:
+      # To use an Azure Service Connection, un-comment the following line.
+      # azureSubscription: ''
+      command: 'up'
+      stack: '$(pulumiStackName)'
+      args: '--yes --cwd $(pulumiWorkingDirectory)'

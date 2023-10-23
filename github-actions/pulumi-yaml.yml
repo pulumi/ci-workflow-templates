@@ -1,0 +1,69 @@
+name: Preview or update Pulumi app [[ .PulumiStackName ]]
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - [[.PathFilter]]
+  pull_request:
+    branches:
+      - master
+    paths:
+      - [[.PathFilter]]
+
+# These are the environment variables that jobs in the workflow have access to.
+# By defining them here, all jobs/steps will have access to these variables.
+env:
+  # IMPORTANT! You must map the env vars for your cloud provider here even though you add them as secrets
+  # to this repository.
+  # See the setup page for cloud providers here: https://www.pulumi.com/docs/intro/cloud-providers/.
+  # For example, if you are using AWS, then you should add the following:
+  # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+  PULUMI_STACK_NAME: [[.PulumiStackName]]
+  PULUMI_WORKING_DIRECTORY: [[.WorkingDirectory]]
+
+jobs:
+  pulumi:
+    name: Pulumi
+    runs-on: ubuntu-latest
+    steps:
+      # Turnstyle is used to prevent multiple push jobs from running at the same time. We
+      # limit it to push jobs to allow PR jobs to run concurrently.
+      - name: Turnstyle
+        if: ${{ github.event_name == 'push' }}
+        uses: softprops/turnstyle@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@v2
+
+      - name: PR previews
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: pulumi/actions@v3
+        with:
+          command: preview
+          stack-name: ${{ env.PULUMI_STACK_NAME }}
+          work-dir: ${{ env.PULUMI_WORKING_DIRECTORY }}
+
+      - name: Apply infrastructure update
+        if: ${{ github.event_name == 'push' }}
+        uses: pulumi/actions@v3
+        with:
+          command: up
+          stack-name: ${{ env.PULUMI_STACK_NAME }}
+          work-dir: ${{ env.PULUMI_WORKING_DIRECTORY }}
+
+      # If you'd like to run your Pulumi application outside of the official GitHub Action
+
+      #- name: Install Pulumi CLI
+      #  uses: pulumi/setup-pulumi@v2
+
+      #- name: PR previews
+      #  run: pulumi preview -s $PULUMI_STACK_NAME --cwd $PULUMI_WORKING_DIRECTORY
+      #  if: ${{ github.event_name == 'pull_request' }}
+
+      #- name: Apply infrastructure update
+      #  run: pulumi update --yes -s $PULUMI_STACK_NAME --cwd $PULUMI_WORKING_DIRECTORY
+      #  if: ${{ github.event_name == 'push' }}
