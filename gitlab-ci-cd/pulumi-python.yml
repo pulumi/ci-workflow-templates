@@ -47,4 +47,4 @@ update:
     - pulumi up --yes --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
   only:
     refs:
-      - master
+      - main
