@@ -17,9 +17,9 @@ pipelines:
           script:
             - *vars
             - pulumi preview --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
-  
+
   branches:
-    master:
+    main:
       - step:
           name: Update infrastructure
           # Using the deployment keyword will ensure that only one pipeline is executing for

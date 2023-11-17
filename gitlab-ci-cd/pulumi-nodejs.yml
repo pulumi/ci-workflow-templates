@@ -10,7 +10,7 @@ variables:
 only:
   changes:
     - [[ .PathFilter ]]
-  
+
 default:
   before_script:
     # Restore dependencies using yarn.
@@ -24,7 +24,7 @@ default:
   #   stage: pulumi
   #   script:
   #     - export
-  
+
 preview:
   stage: pulumi
   script:
@@ -38,4 +38,4 @@ update:
     - pulumi up --yes --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
   only:
     refs:
-      - master
+      - main

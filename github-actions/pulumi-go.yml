@@ -2,12 +2,12 @@ name: Preview or update Pulumi app [[ .PulumiStackName ]]
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - [[ .PathFilter ]]
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - [[ .PathFilter ]]
 
