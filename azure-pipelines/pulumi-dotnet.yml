@@ -2,16 +2,16 @@ trigger:
     batch: true
     branches:
       include:
-      - master
+      - main
     paths:
       include:
       - [[ .PathFilter ]]
-  
+
 pr:
   branches:
     include:
-    # Run PR builds that target master.
-    - master
+    # Run PR builds that target main.
+    - main
   paths:
     include:
     - [[ .PathFilter ]]
@@ -40,7 +40,7 @@ jobs:
       command: 'preview'
       stack: '$(pulumiStackName)'
       args: '--cwd $(pulumiWorkingDirectory)'
-  
+
   - task: Pulumi@1
     condition: or(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.Reason'], 'BatchedCI'))
     inputs:
@@ -49,4 +49,3 @@ jobs:
       command: 'up'
       stack: '$(pulumiStackName)'
       args: '--yes --cwd $(pulumiWorkingDirectory)'
-  
