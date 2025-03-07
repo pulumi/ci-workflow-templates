@@ -7,10 +7,6 @@ variables:
   PULUMI_STACK_NAME: [[ .PulumiStackName ]]
   PULUMI_WORKING_DIRECTORY: [[ .WorkingDirectory ]]
 
-only:
-  changes:
-    - [[ .PathFilter ]]
-
 # Having problems with environment variables?
 # Uncomment the following job to see all env vars
 # exported in your GitLab Runner.
@@ -18,6 +14,9 @@ only:
 #   stage: pulumi
 #   script:
 #     - export
+#  rules:
+#    - changes:
+#        - [[ .PathFilter ]]
   
 preview:
   stage: pulumi
@@ -25,6 +24,9 @@ preview:
     - pulumi preview --cwd ${PULUMI_WORKING_DIRECTORY} -s ${PULUMI_STACK_NAME}
   only:
     - merge_requests
+  rules:
+    - changes:
+        - [[ .PathFilter ]]
 
 update:
   stage: pulumi
@@ -33,3 +35,6 @@ update:
   only:
     refs:
       - master
+  rules:
+    - changes:
+        - [[ .PathFilter ]]
